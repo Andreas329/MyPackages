@@ -1,4 +1,4 @@
 weighted.sigma <- function(x, w){
-  1/length(x)*sum(w*(x-weighted.mean(x, w))^2)
+  1/(length(x)-1)*sum(w*(x-weighted.mean(x, w))^2)
 }
 

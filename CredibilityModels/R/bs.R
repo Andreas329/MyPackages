@@ -31,15 +31,16 @@ bs <- function(formula, data, weights, ... ) {
   #calc estimator for tau
   w.group <-  sapply(data.split, function(data) sum(data$w))
   y.group <-  sapply(data.split, function(data) weighted.mean(data$y, data$w))
-  nominator <- sum(w.group *(y.group - weighted.mean(y, w))^2) - length(data.split) * s.est
+  nominator <- sum(w.group*(y.group - weighted.mean(y, w))^2) - (length(data.split)-1) * s.est
   denominator <- sum(w) - sum(w.group^2)/sum(w)
   tau.est <- max(nominator/denominator, 0)
 
   #create output
   kappa <- s.est/tau.est
   alpha <- w.group / (w.group + kappa)
-  cred.est <- alpha * weighted.mean(y, w) + (1-alpha) *y.group
-  return(list(s.est = s.est, tau.est = tau.est, kappa = kappa, alpha = alpha, cred.est = cred.est))
+  mu <- weighted.mean(y.group, alpha)
+  cred.est <- alpha * y.group + (1-alpha) * mu
+  return(list(s.sq = s.est, tau = tau.est, kappa = kappa, alpha = alpha, cred.est = cred.est, mu = mu))
 }
 
 
