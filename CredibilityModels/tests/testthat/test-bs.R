@@ -5,7 +5,7 @@
 ##-------------------------------------------------------------------------
 
 context("bs")
-test_that("bg-fire",{
+test_that("bs-fire",{
   #vgl. Buehlmann-Gisler Uebung 4.1
   dat.fire <- data.frame(Rk = c(rep(paste0("R", (1:5)), each = 5)),
                          Jahr = rep(1:5, 5),
@@ -24,13 +24,36 @@ test_that("bg-fire",{
   expect_equal(trunc(bs.fire$s.sq), 261)
   expect_equal(round(bs.fire$tau, 3), 0.102)
   expect_equal(bs.fire$s.sq/bs.fire$tau, bs.fire$kappa)
-  expect_equal(round(bs.fire$alpha, 2), c(R1 = 0.63,R2 = 0.80, R3 = 0.63, R4 = 0.88, R5 = 0.45))
+  expect_equal(round(bs.fire$est$alpha, 2), c(R1 = 0.63,R2 = 0.80, R3 = 0.63, R4 = 0.88, R5 = 0.45))
   expect_equal(round(bs.fire$cred.est, 2), c(R1 = 0.94,R2 = 0.40, R3 = 1.08, R4 = 0.89, R5 = 0.71))
 
 })
 
 
+test_that("bs-fire-two-groups",{
+  #vgl. Buehlmann-Gisler Uebung 4.1
+  dat.fire <- data.frame(Rk1 = c(rep("a", 15), rep(2, 10)),
+                         Rk2 = c(rep(1:3, each = 5), rep(1:2, each = 5)),
+                         Jahr = rep(1:5, 5),
+                         Anzahl = c(729, 786, 872, 951, 1019,
+                                    1631, 1802, 2090, 2300, 2368,
+                                    796, 827, 874, 917, 944,
+                                    3152, 3454, 3715, 3859, 4198,
+                                    400, 420, 422, 424, 440),
+                         NL = c(0.8, 1.4, 0.3, 0.88, 1.6,
+                                0.06, 0.72, 0.16, 0.20, 0.38,
+                                1.80, 0.6, 0.8, 1.9, 1.1,
+                                0.56, 1.2, 0.84, 1.07, 0.8,
+                                0.1, 0, 0.4, 2.4, 0.1))
 
+  bs.fire <- bs(formula = NL ~ Rk1 + Rk2, weights = Anzahl, data = dat.fire)
+  expect_equal(trunc(bs.fire$s.sq), 261)
+  expect_equal(round(bs.fire$tau, 3), 0.102)
+  expect_equal(bs.fire$s.sq/bs.fire$tau, bs.fire$kappa)
+  expect_equal(round(bs.fire$alpha, 2), c(R1 = 0.63,R2 = 0.80, R3 = 0.63, R4 = 0.88, R5 = 0.45))
+  expect_equal(round(bs.fire$cred.est, 2), c(R1 = 0.94,R2 = 0.40, R3 = 1.08, R4 = 0.89, R5 = 0.71))
+
+})
 
 
 
