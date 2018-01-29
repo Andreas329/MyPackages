@@ -24,15 +24,16 @@ test_that("bs-fire",{
   expect_equal(trunc(bs.fire$s.sq), 261)
   expect_equal(round(bs.fire$tau, 3), 0.102)
   expect_equal(bs.fire$s.sq/bs.fire$tau, bs.fire$kappa)
-  expect_equal(round(bs.fire$est$alpha, 2), c(R1 = 0.63,R2 = 0.80, R3 = 0.63, R4 = 0.88, R5 = 0.45))
-  expect_equal(round(bs.fire$cred.est, 2), c(R1 = 0.94,R2 = 0.40, R3 = 1.08, R4 = 0.89, R5 = 0.71))
-
+  expect_equal(bs.fire$est$Rk, as.factor(c("R1", "R2", "R3", "R4", "R5")))
+  expect_equal(round(bs.fire$est$alpha, 2), c(0.63, 0.80, 0.63, 0.88, 0.45))
+  expect_equal(round(bs.fire$est$est, 2), c(0.94, 0.40, 1.08, 0.89, 0.71))
 })
 
 
 test_that("bs-fire-two-groups",{
   #vgl. Buehlmann-Gisler Uebung 4.1
-  dat.fire <- data.frame(Rk1 = c(rep("a", 15), rep(2, 10)),
+  dat.fire <- data.frame(RkBefore =  c(rep(paste0("R", (1:5)), each = 5)),
+                         Rk1 = c(rep("a", 15), rep(2, 10)),
                          Rk2 = c(rep(1:3, each = 5), rep(1:2, each = 5)),
                          Jahr = rep(1:5, 5),
                          Anzahl = c(729, 786, 872, 951, 1019,
@@ -48,10 +49,14 @@ test_that("bs-fire-two-groups",{
 
   bs.fire <- bs(formula = NL ~ Rk1 + Rk2, weights = Anzahl, data = dat.fire)
   expect_equal(trunc(bs.fire$s.sq), 261)
+  reordering <- c(4, 1, 5, 2, 3)
+  #R4,
+  expect_equal(bs.fire$est$Rk1, as.factor(c("a", "a", "a", 2, 2)[reordering]))
+  expect_equal(bs.fire$est$Rk2, (c(1, 2, 3, 1, 2)[reordering]))
   expect_equal(round(bs.fire$tau, 3), 0.102)
   expect_equal(bs.fire$s.sq/bs.fire$tau, bs.fire$kappa)
-  expect_equal(round(bs.fire$alpha, 2), c(R1 = 0.63,R2 = 0.80, R3 = 0.63, R4 = 0.88, R5 = 0.45))
-  expect_equal(round(bs.fire$cred.est, 2), c(R1 = 0.94,R2 = 0.40, R3 = 1.08, R4 = 0.89, R5 = 0.71))
+  expect_equal(round(bs.fire$est$alpha, 2), c(0.63, 0.80, 0.63, 0.88, 0.45)[reordering])
+  expect_equal(round(bs.fire$est$est, 2), c(0.94, 0.40, 1.08, 0.89, 0.71)[reordering])
 
 })
 
